@@ -10,12 +10,11 @@ p = parametersClass('/projectnb/busplab/Experiments/ECoG_fMRI_RS/Experiments/ECo
     'none',...    % grouping variable
     150,...             % topN feat pooled
     30)                 % topN feat indiv
-%%
+
 [db, edb] = p.generate_database; 
 
-if ~exist('grouped_feat_struct')
-    grouped_feat_struct = format_grouped_features(p, edb); 
-end
+grouped_feat_struct = format_grouped_features(p, edb); 
+
 group_vals = fieldnames(grouped_feat_struct);
 
 for group_value_idx = 1:numel(group_vals)
@@ -156,6 +155,8 @@ for group_value_idx = 1:numel(group_vals)
 
 end
 
-tEnd = toc(tStart); 
-fprintf('Finished.\nTotal elapsed time: %2.4f hrs\n\n', tEnd / 3600);
+tEnd = seconds(toc(tStart)); 
+tEnd.Format = 'hh:mm:ss';
+fprintf('Finished.\nTotal elapsed time: %s\n\n', tEnd);
+
 save(sprintf('%s_total_elapsed_time.mat', p.grouping_variable), 'tEnd');

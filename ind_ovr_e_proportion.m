@@ -49,17 +49,17 @@ for class_label_idx = 1:length(class_labels)
 
     class_onset_e_bool = class_onset_e_prop >= onset_e_sig_prop; 
     class_onset_e_bool_col = cat(1, class_onset_e_bool_col, class_onset_e_bool);
-        
     
-    fig_name = sprintf('sig_e_ovr_proportions_%s.png', class_label);
-    fig_filename = [p.times_label, '_', p.current_group_value, '_', fig_name, '.fig'];
-    png_filename = [fig_name, '.png'];
+    fig_general_name = sprintf('sig_e_ovr_proportions_%s', class_label);
+    fig_quickref_filename = [p.times_label, '_', p.current_group_value, '_', fig_general_name, '.fig'];
+    png_quickref_filename = [p.times_label, '_', p.current_group_value, '_', fig_general_name, '.png'];
+    png_filename = [fig_general_name, '.png'];
 
     class_stim_onset_prop_fig = figure('FileName', png_filename);
     class_stim_onset_prop_fig.WindowState = 'maximized';
     class_stim_onset_prop_fig.Units = 'normalized';
     
-    sgtitle(sprintf('Ratio of %s electrodes considered significant\nto total electrodes per alignment condition\nClass Label: %s. %s', p.current_group_value, plaintext(class_label), plainformat(p.times_label)),'FontSize', title_size);
+    sgtitle(sprintf('Ratio of electrodes grouped as %s considered significant\nto total electrodes per alignment condition\nClass Label: %s. %s', plaintext(p.current_group_value), plaintext(class_label), plainformat(p.times_label)),'FontSize', title_size);
 %     title(sprintf('Class Label: %s. %s', plaintext(class_label), plainformat(p.times_label)),'FontSize', title_size);
     
     subplot(1, 2, 1);
@@ -94,7 +94,8 @@ for class_label_idx = 1:length(class_labels)
     grid on;
     leg2 = legend({'Proportion', sprintf('Significance (%0.4f)', onset_e_sig_prop)}, 'Location', 'northeast', 'FontSize', legend_size);
 
-    savefig(fullfile(p.figs_quickref_path, fig_filename));
+    savefig(fullfile(p.figs_quickref_path, fig_quickref_filename));
+    exportgraphics(class_stim_onset_prop_fig, fullfile(p.figs_quickref_path, png_quickref_filename))
     exportgraphics(class_stim_onset_prop_fig, fullfile(figures_path, class_stim_onset_prop_fig.FileName))
 end
 

@@ -109,9 +109,10 @@ for class_label_idx = 1:length(class_labels)
     end
 
     %%%% class_label Figure
-    fig_name = sprintf('sig_e_ovr_%s', class_label);
-    fig_filename = [p.times_label, '_', p.current_group_value, '_', fig_name, '.fig'];
-    png_filename = [fig_name, '.png'];
+    fig_general_name = sprintf('sig_e_ovr_%s', class_label);
+    fig_quickref_filename = [p.times_label, '_', p.current_group_value, '_', fig_general_name, '.fig'];
+    png_quickref_filename = [p.times_label, '_', p.current_group_value, '_', fig_general_name, '.png'];
+    png_filename = [fig_general_name, '.png'];
 
     sig_e_class_label_auc_fig = figure('FileName', png_filename);
     sig_e_class_label_auc_fig.WindowState = 'maximized'; 
@@ -152,11 +153,12 @@ for class_label_idx = 1:length(class_labels)
 
     xlabel('Class Label', 'FontSize', label_size);
     ylabel('AUC', 'FontSize', label_size);
-    title(sprintf('Mean AUCs of Classifiers Corresponding to\nStatistically Significant %s Electrodes', p.current_group_value), 'FontSize', title_size);
+    title(sprintf('Mean AUCs of Classifiers Corresponding to\nStatistically Significant Electrodes Grouped as %s', p.current_group_value), 'FontSize', title_size);
     subtitle(sprintf('%s, One-versus-Rest, Averaged across subjects. %s', plaintext(class_label), plainformat(p.times_label)), 'FontSize', subtitle_size);
     hold off;
 
-    savefig(fullfile(p.figs_quickref_path, fig_filename));
+    savefig(fullfile(p.figs_quickref_path, fig_quickref_filename));
+    exportgraphics(sig_e_class_label_auc_fig, fullfile(p.figs_quickref_path, png_quickref_filename));
     exportgraphics(sig_e_class_label_auc_fig, fullfile(figures_path, sig_e_class_label_auc_fig.FileName));
 end
 

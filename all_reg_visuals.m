@@ -47,14 +47,15 @@ end
 
 subject_labels = categorical(sub_strs);
 
-fig_name = ['inter_sub_acc'];
-fig_filename = [p.times_label, '_', p.current_group_value, '_', fig_name, '.fig'];
-png_filename = [fig_name, '.png'];
+fig_general_name = ['inter_sub_acc'];
+fig_quickref_filename = [p.times_label, '_', p.current_group_value, '_', fig_general_name, '.fig'];
+png_quickref_filename = [p.times_label, '_', p.current_group_value, '_', fig_general_name, '.png'];
+png_filename = [fig_general_name, '.png'];
 
 inter_sub_acc_fig = figure('FileName', png_filename);
 inter_sub_acc_fig.WindowState = 'maximized';
 
-sgtitle(sprintf('Inter-subject Comparison of LDA Model Accuracies\nWhen Trained on Multiclass Data, %s Electrodes. %s', p.current_group_value, plainformat(p.times_label)), 'FontSize', title_size);
+sgtitle(sprintf('Inter-subject Comparison of LDA Model Accuracies\nWhen Trained on Multiclass Data, Electrodes Grouped as %s. %s', plaintext(p.current_group_value), plainformat(p.times_label)), 'FontSize', title_size);
 
 inter_sub_acc_stim_ax = subplot(1, 2, 1);
 hold on;
@@ -161,7 +162,8 @@ inter_sub_acc_onset_ax.FontSize = label_size;
 legend({plaintext(class_labels{1}), plaintext(class_labels{2}), plaintext(class_labels{3}),'Word Chance', 'Consonant Chance', 'Vowel Chance'},...
     'FontSize', legend_size);
 
-savefig(fullfile(p.figs_quickref_path, fig_filename));
+savefig(fullfile(p.figs_quickref_path, fig_quickref_filename));
+exportgraphics(inter_sub_acc_fig, fullfile(p.figs_quickref_path, png_quickref_filename));
 exportgraphics(inter_sub_acc_fig, fullfile(figures_path, inter_sub_acc_fig.FileName));
 
 function s = plainformat(s)
