@@ -81,7 +81,7 @@ close all;
 %%%%%%%%%
 %%
 %%%% WORKING ------ NO TOUCH
-k_pcts = [0.1 0.3 0.4];
+k_pcts = [0.1 0.2 0.3 0.4];
 for k_pct = k_pcts
 per_sub_flag = false;
 swc = table();
@@ -132,7 +132,7 @@ onset_prop_data = multiouterjoin(ow_bar_data.prop_data, oc_bar_data.prop_data, o
 
 p_values_not_sub_sorted = chitest_p_values(stim_prop_data, onset_prop_data, k_pct)
 end
-% close all; 
+%  close all; 
 
 function [sub_stim_sorted, sub_onset_sorted] = sort_by_sub(edb_nonan, sub_num, class_label)
 
@@ -242,9 +242,9 @@ xmark_offset = 0.1;
 
 clust_prop_fig = figure(); 
 if per_sub_flag
-    sgtitle(sprintf('Breakdown of Cluster Proportions in Top %2.0f%% of %s Scores, Per Subject', k_pct * 100, class_str), 'FontSize', title_size)
+    sgtitle(sprintf('Cluster Proportions in Top %2.0f%% of %s Scores, Per Subject', k_pct * 100, class_str), 'FontSize', title_size)
 else 
-    sgtitle(sprintf('Breakdown of Cluster Proportions in Top %2.0f%% of All %s Scores', k_pct * 100, class_str), 'FontSize', title_size)
+    sgtitle({'Cluster Proportions in ', sprintf('Top %2.0f%% of All', k_pct * 100), sprintf('%s Scores', class_str)}, 'FontSize', title_size)
 end
 
 subplot(2,1,1);
@@ -252,39 +252,56 @@ stim_bar_data = gen_bar_data(stim_all_subs_counts_summary, stim_per_sub_counts, 
 bar(stim_bar_data.clusters, stim_bar_data.per_sub_props, 'stacked');
 
 hold on;
+
+s_counts_top_k = stim_bar_data.prop_data{stim_rows, 2};
+s_counts_all = stim_bar_data.prop_data{stim_rows, 3};
+s_test = chitest(s_counts_top_k, s_counts_all, k_pct);
+
 yline(k_pct);
 scatter([stim_nanbars(:); stim_nanbars(:)],...
     [repmat(k_pct + xmark_offset,length(stim_nanbars),1); 
     repmat(k_pct - xmark_offset,length(stim_nanbars),1)],...
     'x','k', 'LineWidth', 2.5);
-hold off;
 ylim([0,0.7]);
 title('Stim', 'FontSize', subtitle_size);
 ylabel(sprintf('Proportion in top %2.0f%%', k_pct * 100))
 set(gca, 'FontSize', 20);
-legend(params.sub_nums_formal, 'Location', 'eastoutside', 'FontSize', legend_size);
+leg = legend(params.sub_nums_formal, 'Location', 'eastoutside', 'FontSize', legend_size);
+an = annotation('textbox', 'Position', [leg.Position(1) leg.Position(2)-.1 .4 .4], 'String', sprintf('p-val = %0.3f', s_test), 'FitBoxToText', 'on');
+an.FontSize = legend_size;
+an.FontWeight = 'bold';
+if s_test <= 0.05
+    an.BackgroundColor = [0.9290 0.6940 0.1250]
+end
+hold off; 
 
 subplot(2,1,2);
 onset_bar_data = gen_bar_data(onset_all_subs_counts_summary, onset_per_sub_counts, class_label);
 bar(onset_bar_data.clusters, onset_bar_data.per_sub_props, 'stacked');
 
 hold on;
+
+o_counts_top_k = onset_bar_data.prop_data{onset_rows, 2};
+o_counts_all = onset_bar_data.prop_data{onset_rows, 3};
+o_test = chitest(o_counts_top_k, o_counts_all, k_pct);
+
 yline(k_pct);
 scatter([onset_nanbars(:); onset_nanbars(:)],...
     [repmat(k_pct + xmark_offset,length(onset_nanbars),1); 
     repmat(k_pct - xmark_offset,length(onset_nanbars),1)],...
     'x','k', 'LineWidth', 2.5);
-hold off;
 ylim([0,0.7]);
 title('Onset', 'FontSize', subtitle_size);
 ylabel(sprintf('Proportion in top %2.0f%%', k_pct * 100))
 set(gca, 'FontSize', 20);
-legend(params.sub_nums_formal, 'Location', 'eastoutside','FontSize', legend_size);
-
-% stim_prop_data = multiouterjoin(sw_bar_data.prop_data, sc_bar_data.prop_data, sv_bar_data.prop_data);
-% onset_prop_data = multiouterjoin(ow_bar_data.prop_data, oc_bar_data.prop_data, ov_bar_data.prop_data);
-% 
-% p_values_not_sub_sorted = chitest_p_values(stim_prop_data, onset_prop_data, k_pct)
+leg = legend(params.sub_nums_formal, 'Location', 'eastoutside','FontSize', legend_size);
+an = annotation('textbox', 'Position', [leg.Position(1) leg.Position(2)-.1 .4 .4], 'String', sprintf('p-val = %0.3f', o_test), 'FitBoxToText', 'on');
+an.FontSize = legend_size;
+an.FontWeight = 'bold';
+if o_test <= 0.05
+    an.BackgroundColor = [0.9290 0.6940 0.1250]
+end
+hold off;
 
 function bar_data = gen_bar_data(all_subs_counts_summary, per_sub_counts, class_label)
 
@@ -350,18 +367,18 @@ p_onset_vowel = chitest(onset.vowel_name_counts_top_k(onset_rows), onset.vowel_n
 
 out = table(p_onset_word, p_onset_consonant, p_onset_vowel, p_stim_word, p_stim_consonant, p_stim_vowel,...
     'VariableNames', {'p_onset_word', 'p_onset_consonant', 'p_onset_vowel', 'p_stim_word', 'p_stim_consonant', 'p_stim_vowel'});
+
+end
 end
 
-
 function [chisq_pval] = chitest(top_elcs_per_cluster, total_elcs_per_cluster, top_elcs_proportion)
+
 noutcomes = length(top_elcs_per_cluster);
 degfr = noutcomes-1;
 expected = top_elcs_proportion * total_elcs_per_cluster; % top electrodes if they were proportionately distributed across clusters
 devstat = (top_elcs_per_cluster-expected).^2 ./ expected; % calculate deviations from expected for each outcome
 chistat = sum(devstat); % chi2 test statistic
 chisq_pval = chi2cdf(chistat,degfr,'upper'); % get pval
-
-end
 
 end
 

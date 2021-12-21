@@ -1,4 +1,7 @@
-% defines parameter object containing relevant info for the pipeline
+%%%%% defines parameter object containing relevant info for the pipeline
+%%% Requires shorten_multiple_epoch.m. Epoched Data in directory is
+%%% formulated into features and saved as a database of data for the
+%%% downstream events
 
 classdef parametersClass 
     properties(SetAccess = immutable)
@@ -115,8 +118,14 @@ classdef parametersClass
             end
             
             if ~isfile(fullfile(obj.times_path, 'electrodes_database.mat'))
+                
                 electrodes_database = obj.electrodes_table; 
                 electrodes_database.feat_set = cell([height(electrodes_database), 1]);
+                sub_nums_vector = electrodes_database.subject;
+                surf_shapes = {'s', 'v', 'z', 'a', 'i'};
+                [~, ~, ic] = unique(sub_nums_vector); 
+                surf_shapes_col = surf_shapes(ic)'; 
+                electrodes_database.surf_shape = surf_shapes_col; 
 
                 for electrodes_row_idx = 1:height(electrodes_database)
                     row_sub = electrodes_database.subject(electrodes_row_idx);
@@ -135,6 +144,16 @@ classdef parametersClass
                         electrodes_database.cluster_name{electrodes_row_idx} = 'NaN';
                     end
                 end
+                
+                edb_row_num = table([1:height(electrodes_database)]', 'VariableNames', {'edb_row_num'}); 
+                node_num = discretize([1:height(electrodes_database)]', obj.number_of_nodes);
+                node_num_col = table(node_num, 'VariableNames', {'node_num'});
+                word_elect_performance = table(zeros([height(electrodes_database), 1]), 'VariableNames', {'word_accuracy_change_wo_electrode'}); 
+                cons_elect_performance = table(zeros([height(electrodes_database), 1]), 'VariableNames', {'cons_accuracy_change_wo_electrode'}); 
+                vowel_elect_performance = table(zeros([height(electrodes_database), 1]), 'VariableNames', {'vowel_accuracy_change_wo_electrode'}); 
+                
+                electrodes_database = [edb_row_num, electrodes_database, node_num_col, word_elect_performance, cons_elect_performance, vowel_elect_performance];
+                
                 save(fullfile(obj.times_path, 'electrodes_database.mat'), 'electrodes_database', '-v7.3');
             else
                 fprintf('Loading electrodes database... ');

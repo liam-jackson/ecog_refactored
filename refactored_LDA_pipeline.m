@@ -1,3 +1,6 @@
+%%%%% LDA Pipeline for ECoG Data Analysis
+%%% Requires 
+
 close all; 
 clear all; 
 clc;
@@ -11,12 +14,13 @@ p = parametersClass('/projectnb/busplab/Experiments/ECoG_fMRI_RS/Experiments/ECo
     150,...             % topN feat pooled
     30)                 % topN feat indiv
 
-[db, edb] = p.generate_database; 
-
+[~, edb] = p.generate_database; 
+set(0,'DefaultFigureWindowStyle','docked')
+%%
 grouped_feat_struct = format_grouped_features(p, edb); 
 
 group_vals = fieldnames(grouped_feat_struct);
-
+%%
 for group_value_idx = 1:numel(group_vals)
 
     p.current_group_value = group_vals{group_value_idx};
@@ -160,3 +164,50 @@ tEnd.Format = 'hh:mm:ss';
 fprintf('Finished.\nTotal elapsed time: %s\n\n', tEnd);
 
 save(sprintf('%s_total_elapsed_time.mat', p.grouping_variable), 'tEnd');
+
+%%
+%%% Part 2 
+mkdir(fullfile(p.grouping_path, p.current_group_value, 'excluded_electrode_data')); 
+files = dir(fullfile(p.grouping_path, p.current_group_value, 'excluded_electrode_data', '*.mat')); 
+
+if isempty(files)
+    job = execute_multinode_feat_importance(p)
+else
+    generate_edb_nonan.m
+end
+
+%%
+% edb = load(fullfile(p.times_path, 'electrodes_database.mat')).electrodes_database;
+A = edb{:,end-2:end}; 
+A
+t = length(find(A)) / 3
+
+%%
+clc
+for i = 1:p.number_of_nodes
+    node_number = job(i).private{1}.args{3}.node_number;
+    x = conn_jobmanager('statusjob', job(i));
+    status = x.tagmsg; 
+    
+    fprintf('Node %d is %s.\n', node_number, status{1})
+end
+
+%%
+if ~exist('all_class_sub_cv_mRMR_LDA_data', 'var')
+    load(fullfile(p.grouping_path, p.current_group_value, 'checkpoint_e2000_w50_s25.mat'), 'all_class_sub_cv_mRMR_LDA_data');
+end
+
+%%
+
+%%    
+row_nums_curr = sort(row_nums_curr);
+missing = edb(~ismember([1:653], row_nums_curr), 'node_num')
+
+
+
+
+
+
+
+
+

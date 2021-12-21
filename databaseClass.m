@@ -17,4 +17,5 @@ classdef databaseClass
            
             db.subject_class_labels = subject_class_labels;
         end
+    end
 end
