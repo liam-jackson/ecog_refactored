@@ -1,15 +1,15 @@
-function sub_cv_mRMR_LDA_data = all_electrodes_cv_mRMR_LDA(params, class_label)
-% all_electrodes_cv_mRMR_LDA Expects all_subs_feat_table. 
-%   This function will perform CV, mRMR on training set, LDA
-%   training on features selected from training set, and tests the model with
-%   the remaining fold of the CV iteration. 
-%   
-%   sub_cv_mRMR_LDA_data is a struct with fieldnames = subject strings
-%   each subject in the struct has onset and stim data 5-fold cv results
-%   
-%   for each fold, this fxn tabulates the mRMR predictors selected, 
-%   the predictor scores, and the multiclass model accuracy for the current
-%   class_label group
+%{
+
+This function will perform CV, mRMR on training set, LDA
+training on features selected from training set, and tests the model with
+the remaining fold of the CV iteration. 
+
+for each fold, it tabulates the mRMR predictors selected, the predictor
+scores, the LDA accuracy for each particular label. 
+
+%}
+
+function sub_cv_mRMR_LDA_data = do_not_mod(params, class_label)
 
 cv_mRMR_LDA_res_file = 'sub_cv_mRMR_LDA_data.mat';
 cv_mRMR_LDA_res_filename_full = fullfile(params.grouping_path, params.current_group_value, class_label, cv_mRMR_LDA_res_file);

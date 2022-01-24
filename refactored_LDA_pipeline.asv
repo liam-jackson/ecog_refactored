@@ -28,7 +28,7 @@ set(0,'DefaultFigureWindowStyle','docked') % this is purely a preference thing
 grouped_feat_struct = format_grouped_features(p, edb); % help format_grouped_features for details
 
 group_vals = fieldnames(grouped_feat_struct); % unique values of the grouping variable correspond to the fields
-
+%%
 for group_value_idx = 1:numel(group_vals) % iterate through all unique grouping variable values, if none selected this only runs once
 
     p.current_group_value = group_vals{group_value_idx};
@@ -156,13 +156,13 @@ for group_value_idx = 1:numel(group_vals) % iterate through all unique grouping 
     %%%% Step 8. Visualizing results for all electrodes, ovr labels
     all_ovr_visuals;        % fig 2-4
     %%%% Step 9. Visualizing distribution of aucs based on random data
-    perm_test_norm_visual;  % fig 5-6 (same data, represented differently)
+    perm_test_norm_visual;  % fig 5
     %%%% Step 10. Visualizing step 8, but significant electrodes only
-    sig_ovr_visuals;        % fig 7-9
+    sig_ovr_visuals;        % fig 6-8
     %%%% Step 11. Visualizing proportions of electrodes considered significant
-    ind_ovr_e_proportion;   % fig 10-12
+    ind_ovr_e_proportion;   % fig 9-11
     %%%% Step 12. Projecting significant electrodes onto brain
-    % mni_electrode_visual;   % fig 13 (not a figure, creates a surf_show plot)
+    % mni_electrode_visual;   % fig 12 (not a figure, creates a surf_show plot)
 
 %     close all; 
 
@@ -184,6 +184,12 @@ if isempty(files)
 else
     generate_edb_nonan.m
 end
+
+%%
+% edb = load(fullfile(p.times_path, 'electrodes_database.mat')).electrodes_database;
+A = edb{:,end-2:end}; 
+A
+t = length(find(A)) / 3
 
 %%
 clc

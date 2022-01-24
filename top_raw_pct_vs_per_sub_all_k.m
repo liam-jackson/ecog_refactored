@@ -76,12 +76,12 @@ onset_prop_data_per_sub = multiouterjoin(ow_bar_data_per_sub.prop_data, oc_bar_d
 
 p_values_per_sub = chitest_p_values(stim_prop_data_per_sub, onset_prop_data_per_sub, k_pct)
 
-close all;
+% close all;
 
 %%%%%%%%%
 %%
 %%%% WORKING ------ NO TOUCH
-k_pcts = [0.1 0.3 0.4];
+k_pcts = [0.1 0.2 0.3 0.4];
 for k_pct = k_pcts
 per_sub_flag = false;
 swc = table();

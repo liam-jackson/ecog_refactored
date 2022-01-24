@@ -30,53 +30,57 @@ class_labels = p.class_names;
 data_cols = {'word_accuracy_change_wo_electrode',...
     'cons_accuracy_change_wo_electrode',...
     'vowel_accuracy_change_wo_electrode'};
+
 %%
-%%%% WORKING ------ NO TOUCH
-per_sub_flag = true;
-swc_per_sub = table();
-swc_per_sub.cluster_name = unique(edb_nonan.cluster_name);
-scc_per_sub = swc_per_sub;
-svc_per_sub = swc_per_sub; 
 
-owc_per_sub = swc_per_sub; 
-occ_per_sub = swc_per_sub; 
-ovc_per_sub = swc_per_sub;
-
-for sub_num = p.sub_nums
-    [sw_sorted_per_sub, ow_sorted_per_sub] = sort_by_sub(edb_nonan, sub_num, 'word_name');
-
-    [sc_sorted_per_sub, oc_sorted_per_sub] = sort_by_sub(edb_nonan, sub_num, 'consonants_name');
-
-    [sv_sorted_per_sub, ov_sorted_per_sub] = sort_by_sub(edb_nonan, sub_num, 'vowel_name');
-    
-    [sw_top_k_per_sub, ow_top_k_per_sub] = count_top_k(sw_sorted_per_sub, ow_sorted_per_sub, k_pct); 
-    [sc_top_k_per_sub, oc_top_k_per_sub] = count_top_k(sc_sorted_per_sub, oc_sorted_per_sub, k_pct); 
-    [sv_top_k_per_sub, ov_top_k_per_sub] = count_top_k(sv_sorted_per_sub, ov_sorted_per_sub, k_pct); 
-
-    swc_per_sub = addvars(swc_per_sub, sw_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
-    scc_per_sub = addvars(scc_per_sub, sc_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
-    svc_per_sub = addvars(svc_per_sub, sv_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
-
-    owc_per_sub = addvars(owc_per_sub, ow_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
-    occ_per_sub = addvars(occ_per_sub, oc_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
-    ovc_per_sub = addvars(ovc_per_sub, ov_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
-
-end
-
-sowc_per_sub = table({swc_per_sub, owc_per_sub}, 'VariableNames', {'word_name'});
-socc_per_sub = table({scc_per_sub, occ_per_sub}, 'VariableNames', {'consonants_name'});
-sovc_per_sub = table({svc_per_sub, ovc_per_sub}, 'VariableNames', {'vowel_name'});
-
-[w_fig_per_sub, sw_bar_data_per_sub, ow_bar_data_per_sub] = plot_props(edb_nonan, sowc_per_sub, k_pct, p, per_sub_flag);
-[c_fig_per_sub, sc_bar_data_per_sub, oc_bar_data_per_sub] = plot_props(edb_nonan, socc_per_sub, k_pct, p, per_sub_flag);
-[v_fig_per_sub, sv_bar_data_per_sub, ov_bar_data_per_sub] = plot_props(edb_nonan, sovc_per_sub, k_pct, p, per_sub_flag);
-
-stim_prop_data_per_sub = multiouterjoin(sw_bar_data_per_sub.prop_data, sc_bar_data_per_sub.prop_data, sv_bar_data_per_sub.prop_data);
-onset_prop_data_per_sub = multiouterjoin(ow_bar_data_per_sub.prop_data, oc_bar_data_per_sub.prop_data, ov_bar_data_per_sub.prop_data);
-
-p_values_per_sub = chitest_p_values(stim_prop_data_per_sub, onset_prop_data_per_sub, k_pct)
-
-close all;
+% run_this = false;
+% if run_this
+%     %%%% WORKING ------ NO TOUCH
+%     per_sub_flag = true;
+%     swc_per_sub = table();
+%     swc_per_sub.cluster_name = unique(edb_nonan.cluster_name);
+%     scc_per_sub = swc_per_sub;
+%     svc_per_sub = swc_per_sub; 
+% 
+%     owc_per_sub = swc_per_sub; 
+%     occ_per_sub = swc_per_sub; 
+%     ovc_per_sub = swc_per_sub;
+% 
+%     for sub_num = p.sub_nums
+%         [sw_sorted_per_sub, ow_sorted_per_sub] = sort_by_sub(edb_nonan, sub_num, 'word_name');
+% 
+%         [sc_sorted_per_sub, oc_sorted_per_sub] = sort_by_sub(edb_nonan, sub_num, 'consonants_name');
+% 
+%         [sv_sorted_per_sub, ov_sorted_per_sub] = sort_by_sub(edb_nonan, sub_num, 'vowel_name');
+% 
+%         [sw_top_k_per_sub, ow_top_k_per_sub] = count_top_k(sw_sorted_per_sub, ow_sorted_per_sub, k_pct); 
+%         [sc_top_k_per_sub, oc_top_k_per_sub] = count_top_k(sc_sorted_per_sub, oc_sorted_per_sub, k_pct); 
+%         [sv_top_k_per_sub, ov_top_k_per_sub] = count_top_k(sv_sorted_per_sub, ov_sorted_per_sub, k_pct); 
+% 
+%         swc_per_sub = addvars(swc_per_sub, sw_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
+%         scc_per_sub = addvars(scc_per_sub, sc_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
+%         svc_per_sub = addvars(svc_per_sub, sv_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
+% 
+%         owc_per_sub = addvars(owc_per_sub, ow_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
+%         occ_per_sub = addvars(occ_per_sub, oc_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
+%         ovc_per_sub = addvars(ovc_per_sub, ov_top_k_per_sub.GroupCount, 'NewVariableNames', {sprintf('S%d', sub_num)});
+% 
+%     end
+% 
+%     sowc_per_sub = table({swc_per_sub, owc_per_sub}, 'VariableNames', {'word_name'});
+%     socc_per_sub = table({scc_per_sub, occ_per_sub}, 'VariableNames', {'consonants_name'});
+%     sovc_per_sub = table({svc_per_sub, ovc_per_sub}, 'VariableNames', {'vowel_name'});
+% 
+%     [w_fig_per_sub, sw_bar_data_per_sub, ow_bar_data_per_sub] = plot_props(edb_nonan, sowc_per_sub, k_pct, p, per_sub_flag);
+%     [c_fig_per_sub, sc_bar_data_per_sub, oc_bar_data_per_sub] = plot_props(edb_nonan, socc_per_sub, k_pct, p, per_sub_flag);
+%     [v_fig_per_sub, sv_bar_data_per_sub, ov_bar_data_per_sub] = plot_props(edb_nonan, sovc_per_sub, k_pct, p, per_sub_flag);
+% 
+%     stim_prop_data_per_sub = multiouterjoin(sw_bar_data_per_sub.prop_data, sc_bar_data_per_sub.prop_data, sv_bar_data_per_sub.prop_data);
+%     onset_prop_data_per_sub = multiouterjoin(ow_bar_data_per_sub.prop_data, oc_bar_data_per_sub.prop_data, ov_bar_data_per_sub.prop_data);
+% 
+%     p_values_per_sub = chitest_p_values(stim_prop_data_per_sub, onset_prop_data_per_sub, k_pct)
+% 
+% end
 
 %%%%%%%%%
 %%
@@ -407,7 +411,3 @@ top_pct_brain_plots(stable, otable, class_label, k_pct, 'right', 'right');
 top_pct_brain_plots(stable, otable, class_label, k_pct, 'right', 'medial');
 
 end
-
-
-
-

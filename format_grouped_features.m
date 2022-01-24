@@ -1,4 +1,7 @@
 function feat_struct = format_grouped_features(params, edb)
+% format_grouped_features Formats a struct based on the grouping variable
+%   in parametersClass object. 
+%   Output struct has fields corresponding to unique values of the grouping variable. 
 
 sub_nums = unique(edb.subject); 
 class_names = params.class_names; 

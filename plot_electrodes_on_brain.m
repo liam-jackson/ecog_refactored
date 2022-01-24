@@ -126,14 +126,6 @@ mni_coords(:,5) = mat2cell(shapes, ones(size(shapes, 1), 1), ones(1, size(shapes
 writecell(mni_coords(lefthemi_vector, :), ops.lh_tempfile);
 writecell(mni_coords(righthemi_vector, :), ops.rh_tempfile);
 
-
-
-
-
-
-
-
-
 % 
 % if ~ops.suppress_brain_surfs
 % plot electrode points with specified colors on brain surface
@@ -188,27 +180,6 @@ delete(findobj('Type','Line')) % delete dotted outlines around patches
 %                 'SURFACE_ADD', ops.lh_tempfile, 'SURFACE_PROPERTIES','color', color_values(lefthemi_vector,:), 'RESOLUTION', surfshow_resolution); %, 'PRINT', 'view', 'mosaic'); % colored electrode locations
 %     delete(findobj('Type','Line')) % delete dotted outlines around patches
 % end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 add_legend(ops, clusterkey, surf_plot_data_table)
 add_title(ops, surf_plot_data_table, class_label)

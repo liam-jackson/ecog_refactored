@@ -1,4 +1,16 @@
 function cv_mRMR_LDA_SCC_node_pipeline(temp_struct)
+% cv_mRMR_LDA_SCC_node_pipeline accepts the temporary struct defined in 
+%   execute_multinode_pipeline. This function is a condensed version of the 
+%   ML pipeline.
+%
+%   This version contains the processes that are necessary for an iterated
+%   permutation test to randomize models for AUC statistics. The results
+%   from 12 iterations (permutations) are saved in the auc_results_path.
+%   The filenames contain the node number, which is used to track the
+%   progress of the distributed processes. 
+%   
+%   See also: execute_multinode_pipeline,
+%   indiv_electrode_cv_mRMR_LDA_OvR_rand 
 
 params = load(temp_struct.temp_params_filename).params; 
 node_number = temp_struct.node_number; 

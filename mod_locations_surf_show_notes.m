@@ -18,8 +18,6 @@ nexttile
 imshow(left_stim_files(file).name)
 end
 
-
-
 onset_files = dir(strcat('*onset*', class_label, '*.png'))
 
 left_idx = [1 4 2 3];
@@ -33,7 +31,7 @@ for file = left_idx
 nexttile
 imshow(onset_files(file).name)
 end
-%%
+
 
 %%
 close all force; 

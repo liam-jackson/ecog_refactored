@@ -1,7 +1,7 @@
 % This adds data from an STL file to the VTK_ReferenceShapes file. 
-% Adds shape options to surf plots, must generate STL file in CAD then add
-% the option in /project/busplab/software/display/CreateVolume.m, 
-% line 286-ish. Also has fxn to remove shapes from file.
+% Adds shape options to surf plots, must generate binary STL file in CAD 
+% then add the option in /project/busplab/software/display/CreateVolume.m, 
+% line 286-ish. Also has fxn to remove shapes from VTKfile.
 
 stl_filename = 'triangular_pyramid.stl' ;
 shape_name = 'tet2'; 
@@ -81,5 +81,3 @@ vtk_mf.patches = patches;
 vtk_mf.shapes = shapes;
 
 end
-
-

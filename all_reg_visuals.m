@@ -162,6 +162,7 @@ inter_sub_acc_onset_ax.FontSize = label_size;
 legend({plaintext(class_labels{1}), plaintext(class_labels{2}), plaintext(class_labels{3}),'Word Chance', 'Consonant Chance', 'Vowel Chance'},...
     'FontSize', legend_size);
 
+figures_path = fullfile(p.grouping_path, p.current_group_value, 'Figures');
 savefig(fullfile(p.figs_quickref_path, fig_quickref_filename));
 exportgraphics(inter_sub_acc_fig, fullfile(p.figs_quickref_path, png_quickref_filename));
 exportgraphics(inter_sub_acc_fig, fullfile(figures_path, inter_sub_acc_fig.FileName));

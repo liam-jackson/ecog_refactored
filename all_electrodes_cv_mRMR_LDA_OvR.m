@@ -1,17 +1,15 @@
-% Expects all_subs_feat_table
-
-%{
-
-This function will perform CV, mRMR on training set, LDA
-training on features selected from training set, and tests the model with
-the remaining fold of the CV iteration. 
-
-for each fold, it tabulates the mRMR predictors selected, the predictor
-scores, the LDA AUC for each particular label. 
-
-%}
-
 function sub_cv_mRMR_LDA_OvR_data = all_electrodes_cv_mRMR_LDA_OvR(params, class_label)
+% all_electrodes_cv_mRMR_LDA_OvR Expects all_subs_feat_table. 
+%   This function will perform CV, mRMR on training set, LDA
+%   training on features selected from training set, and tests the model with
+%   the remaining fold of the CV iteration. 
+%   
+%   sub_cv_mRMR_LDA_OvR_data is a struct with fieldnames = subject strings
+%   each subject in the struct has onset and stim data 5-fold cv results
+%   
+%   for each fold, this fxn tabulates the mRMR predictors selected, 
+%   the predictor scores, and the model AUC for each particular label in 
+%   the current class_label type
 
 cv_mRMR_LDA_OvR_res_file = 'sub_cv_mRMR_LDA_OvR_data.mat';
 cv_mRMR_LDA_OvR_res_filename_full = fullfile(params.grouping_path, params.current_group_value, class_label, cv_mRMR_LDA_OvR_res_file);
@@ -122,7 +120,7 @@ save(cv_mRMR_LDA_OvR_res_filename_full, 'sub_cv_mRMR_LDA_OvR_data', '-v7.3');
 fprintf('Done.\n');    
 
 else
-fprintf('\n\Loading sub_cv_mRMR_LDA_OvR_data...');
+fprintf('\nLoading sub_cv_mRMR_LDA_OvR_data...');
 
 sub_cv_mRMR_LDA_OvR_data = load(cv_mRMR_LDA_OvR_res_filename_full).sub_cv_mRMR_LDA_OvR_data;    
 fprintf('Done.\n');    

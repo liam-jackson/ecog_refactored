@@ -1,4 +1,7 @@
-%% ind_ovr
+% indiv_electrode_ovr_auc_compiled operates on individual electrode AUC
+% results. Note depending on grouping variable chose, you may have to add
+% the variable of interest to the bottom where results are compiled into
+% the output table. (lines 111 and 138)
 
 ind_ovr = all_class_sub_indiv_elect_cv_mRMR_LDA_OvR_data;
 
@@ -79,6 +82,8 @@ for sub_num = sub_nums
         
     end
 end
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
 stim_table_row_col = zeros([height(sub_stim_e_id_auc_all_labels), 1]);
 stim_cluster_col = cell([height(sub_stim_e_id_auc_all_labels), 1]);

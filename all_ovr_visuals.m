@@ -130,6 +130,7 @@ for class_label_idx = 1:length(class_labels)
     subtitle(sprintf('%s, One-versus-Rest, Averaged across subjects. %s', plaintext(class_label), plainformat(p.times_label)), 'FontSize', subtitle_size);
     hold off; 
 
+    figures_path = fullfile(p.grouping_path, p.current_group_value, 'Figures');
     savefig(fullfile(p.figs_quickref_path, fig_quickref_filename));
     exportgraphics(class_label_auc_fig, fullfile(p.figs_quickref_path, png_quickref_filename))
     exportgraphics(class_label_auc_fig, fullfile(figures_path, class_label_auc_fig.FileName))

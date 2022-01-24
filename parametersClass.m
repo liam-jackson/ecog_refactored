@@ -1,47 +1,47 @@
-%%%%% defines parameter object containing relevant info for the pipeline
-%%% Requires shorten_multiple_epoch.m. Epoched Data in directory is
-%%% formulated into features and saved as a database of data for the
-%%% downstream events
-
 classdef parametersClass 
+    % parametersClass defines container of relevant info for analysis parameters
+    %   Pass: (ecog_preprocessed_path, event_duration, window, stride,
+    %   grouping_var, topN_feat_pool, topN_feat_indiv). 
+    %   Outputs an object with params accessible through dot indexing. 
+
     properties(SetAccess = immutable)
-        ecog_preprocessed_path
-        epoched_data_path
-        ml_path
-        algo_data_path
-        LDA_path
-        figs_quickref_path
-        times_path
-        times_label
-        grouping_path
-        grouping_label
+        ecog_preprocessed_path % Path to Preprocessed ECoG data 
+        epoched_data_path % Immutable, defined based on expected file structure of parent directory
+        ml_path % Immutable, defined based on expected file structure of parent directory
+        algo_data_path % Immutable, defined based on expected file structure of parent directory
+        LDA_path % Immutable, defined based on expected file structure of parent directory
+        figs_quickref_path % Immutable, created during pipeline for easy access to figures generated
+        times_path % Generated path based on parameters passed to constructor
+        times_label % Shortened version of times_path used for IDing some generated files
+        grouping_path % Generated path to contain results spectific to a grouping parameter
+        grouping_label % Shortened version of grouping_path used for IDing some generated files
         
-        full_run_label
-        electrodes_table
-        grouping_variable
+        full_run_label % Combined label of the form: (times_label)_(grouping_label)
+        electrodes_table % Electrodes table imported from source electrodes.mat file
+        grouping_variable % User-defined (but immutable after intialization) variable of electrodes_table to use as a grouping parameter. 'none' also valid
 
-        event_duration
-        window
-        stride
+        event_duration % The event duration specifies how much of the epoched signal will be used in the discretization process
+        window % The window size (ms) of the moving average filter
+        stride % The stride length (ms) of the MVA window
 
-        topN_feat_pool
-        topN_feat_indiv
+        topN_feat_pool % Top N features to select from the mRMR results in the pooled data analyses
+        topN_feat_indiv % Top N features to select from the mRMR results in the individual data analyses
     end
     
     properties
-        current_group_value
-        pooled_electrode_feature_set
-        individual_electrode_feature_set
-        auc_results_path
+        current_group_value % Current grouping variable value, changes per iteration (eg. if grouping_variable is depth_type, current_group_value will cycle through 'depth', 'surface')
+        pooled_electrode_feature_set % The pooled electrode feature set associated with the current_group_value 
+        individual_electrode_feature_set % The individual electrode feature sets associated with the current_group_value 
+        auc_results_path % Generated path for saving Permutation Test results
     end
     
     properties (Constant)
-        p_value = 0.05; 
-        number_of_nodes = 50;        
-        class_names = {'word_name', 'consonants_name', 'vowel_name'};
-        class_names_formal = {'Word Name', 'Consonants Name', 'Vowel Name'};
-        sub_nums = [357, 362, 369, 372, 376];
-        sub_nums_formal = {'S357', 'S362', 'S369', 'S372', 'S376'};
+        p_value = 0.05; % p-value for determining significance
+        number_of_nodes = 50; % number of SCC nodes to use in permutation test
+        class_names = {'word_name', 'consonants_name', 'vowel_name'}; % These correspond to the groups of labels 
+        class_names_formal = {'Word Name', 'Consonants Name', 'Vowel Name'}; % "Formal" labels for titling figures, legends, etc
+        sub_nums = [357, 362, 369, 372, 376]; % The subject identifiers as integers
+        sub_nums_formal = {'S357', 'S362', 'S369', 'S372', 'S376'}; % The subject identifiers as strings
     end
     
     methods 
@@ -49,7 +49,9 @@ classdef parametersClass
         function params = parametersClass(ecog_preprocessed_path,...
                 event_duration, window, stride, grouping_var,...
                 topN_feat_pool, topN_feat_indiv)
-                        
+            % Pass: (ecog_preprocessed_path, event_duration, window, stride,
+            %     grouping_var, topN_feat_pool, topN_feat_indiv). 
+            
             params.ecog_preprocessed_path = ecog_preprocessed_path; 
             params.epoched_data_path = fullfile(ecog_preprocessed_path, 'LocalEpoched');
             params.ml_path = fullfile(ecog_preprocessed_path, 'MachineLearning');
@@ -72,6 +74,24 @@ classdef parametersClass
         end
         
         function [database, electrodes_database] = generate_database(obj)
+            % generate_database generates database of subject level data, database of electrode level data.
+            %    p = parametersClass(args) 
+            %    [db, edb] = p.generate_database
+            %    db is a table:
+%
+%                 sub_num    stim_data_per_electrode    onset_data_per_electrode
+%                 _______    _______________________    ________________________
+% 
+%                   357           {153×1 cell}                {153×1 cell}      
+%                   362           {198×1 cell}                {198×1 cell}      
+%                   369           {250×1 cell}                {250×1 cell}      
+%                   372           {214×1 cell}                {214×1 cell}      
+%                   376           {221×1 cell}                {221×1 cell}       
+%
+            %    edb has the same structure as electrodes.mat (with a few additional columns)
+            %    More importantly, edb has a feat_set for each electrode,
+            %    based on values in parametersClass.
+            
             if ~isfile(fullfile(obj.times_path, 'database.mat'))
                 database = table();
                 for sub_num_formal_idx = 1:length(obj.sub_nums_formal)
@@ -165,7 +185,7 @@ classdef parametersClass
 end
 
 function feat_table = create_features(params, electrode_num, short_array)
-
+    % Helper function for generate_database
 sample_freq = 1000; 
 window_samples = sample_freq * (params.window / 1000);
 stride_samples = sample_freq * (params.stride / 1000);
